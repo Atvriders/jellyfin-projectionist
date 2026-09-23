@@ -9,7 +9,9 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <NoWarn>CS1591;CA1819;CA1308;CA1822;CA1031</NoWarn>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
+    <!-- Keep the DLL independent of the git commit, so a release zip's checksum does not depend on which commit it was built from. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Authors>AhmedMedia</Authors>
     <Description>Plays preroll videos before movies and episodes in Jellyfin. Folder-based, episode-aware, with a properly designed admin UI.</Description>
   </PropertyGroup>
@@ -18,6 +20,10 @@
     <PackageReference Include="Jellyfin.Controller" Version="10.11.0" />
     <PackageReference Include="Jellyfin.Model" Version="10.11.0" />
     <PackageReference Include="Jellyfin.Database.Implementations" Version="10.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Projectionist.Tests" />
   </ItemGroup>
 
   <ItemGroup>

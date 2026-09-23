@@ -2,12 +2,28 @@
   {
     "guid": "a51f9a52-7c3b-4b89-9f10-4c8e2b3d1a5e",
     "name": "Projectionist",
-    "description": "Plays preroll videos before movies AND TV episodes. Folder-based source — no Jellyfin library required (auto-creates a hidden internal one). Schedules, per-library rules, per-user rules, maturity gating, cooldowns, skippable prerolls, stats dashboard.",
-    "overview": "Folder-based prerolls with episode support, schedules, and rich smart-selection.",
-    "owner": "AhmedMedia",
+    "description": "Plays preroll videos before movies AND TV episodes, and loads the movie while they play. Folder-based source — no Jellyfin library required (auto-creates a hidden internal one). Schedules, per-library rules, per-user rules, maturity gating, cooldowns, skippable prerolls, stats dashboard. Fork of ZL154/jellyfin-projectionist.",
+    "overview": "Folder-based prerolls; the movie loads while the prerolls play (fork of Projectionist).",
+    "owner": "Atvriders (fork of AhmedMedia)",
     "category": "General",
-    "imageUrl": "https://raw.githubusercontent.com/ZL154/jellyfin-projectionist/main/docs/logo/logo.png",
+    "imageUrl": "https://raw.githubusercontent.com/Atvriders/jellyfin-projectionist/master/docs/logo/logo.png",
     "versions": [
+      {
+        "version": "1.1.2.0",
+        "changelog": "v1.1.2 — the movie now loads while the prerolls play. Feature preload (Off/Warm/Hot) is rebuilt and works on Jellyfin 10.11: Warm wakes the movie's storage for every client that plays prerolls and lets browsers pre-buffer direct-play movies; Hot also starts the movie's transcode during the preroll and hands that session to the player, with browsers pre-downloading its first segments. Also fixes: settings never reaching the web hook on 10.11, and a blank web UI over plain HTTP (compressed index.html was corrupted).",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/Atvriders/jellyfin-projectionist/releases/download/v1.1.2/projectionist_1.1.2.0.zip",
+        "checksum": "3acdd81ae7f3c09a935e71e07af28b3b",
+        "timestamp": "2026-09-23T21:02:08Z"
+      },
+      {
+        "version": "1.1.1.0",
+        "changelog": "Fixes Stats endpoint, /Users list, and HiddenLibrary auto-hide on Jellyfin 10.11.9+ where IUserManager.Users was removed from the interface.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/ZL154/jellyfin-projectionist/releases/download/v1.1.1/projectionist_1.1.1.0.zip",
+        "checksum": "6981ffcb9d320afc978e56f6e9e26d8b",
+        "timestamp": "2026-05-31T03:35:00Z"
+      },
       {
         "version": "1.1.0.0",
         "changelog": "Adds split movie/TV session behaviour, Warm/Hot preload modes, dashboard sidebar access, improved episode preroll handling, and admin UI fixes.",

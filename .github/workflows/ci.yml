@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build src/Projectionist/Projectionist.csproj -c Release --no-restore -warnaserror
+      - name: Test (.NET)
+        run: dotnet test tests/Projectionist.Tests/Projectionist.Tests.csproj -c Release --no-restore
+      - name: Test (web hook)
+        run: node --test tests/js/*.test.mjs

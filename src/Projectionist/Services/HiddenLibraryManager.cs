@@ -428,7 +428,9 @@ public sealed class HiddenLibraryManager
         EnableTrickplayImageExtraction = false,
         ExtractTrickplayImagesDuringLibraryScan = false,
         EnableLUFSScan = false,
+#pragma warning disable CS0618 // Obsolete in 10.11 (TypeOptions replaces it), but still honoured; keep the hidden library offline on every 10.11.x.
         EnableInternetProviders = false,
+#pragma warning restore CS0618
         EnableAutomaticSeriesGrouping = false,
         EnableEmbeddedTitles = false,
         EnableEmbeddedExtrasTitles = false,

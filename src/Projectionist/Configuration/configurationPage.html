@@ -706,10 +706,10 @@
                         <label class="pjt-label" for="pjt-preload-mode">Preload mode</label>
                         <select class="pjt-select" id="pjt-preload-mode">
                             <option value="0">Off</option>
-                            <option value="1">Warm - prepare playback info only</option>
-                            <option value="2">Hot - open stream early while preroll plays</option>
+                            <option value="1">Warm - wake the movie's storage; browsers pre-buffer direct-play movies</option>
+                            <option value="2">Hot - Warm, plus start the movie's transcode during the preroll</option>
                         </select>
-                        <div class="pjt-hint">Hot is experimental and web-client only. It can reduce the handoff pause, but may briefly create an extra stream/transcode request.</div>
+                        <div class="pjt-hint">Warm wakes the movie's storage while prerolls play, and web browsers pre-buffer a movie they will direct-play. Hot also starts the movie's transcode during the preroll and hands it to the player, and web browsers pre-download its first seconds. Each playing device then holds one extra transcode (and hardware encoder session, where the GPU limits them) while the preroll plays. Browsers only pre-buffer while the preroll itself is well buffered, and stop as soon as it stalls.</div>
                     </div>
                 </div>
 

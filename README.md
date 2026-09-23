@@ -21,6 +21,14 @@
 
 # 🎬 Projectionist for Jellyfin
 
+> **This is a fork** of [ZL154/jellyfin-projectionist](https://github.com/ZL154/jellyfin-projectionist) v1.1.1 that makes **the movie load while the prerolls play**, so there is no stop-and-load when the feature starts (see *Feature preload* below). It is built on upstream v1.1.1 and also fixes two upstream bugs on Jellyfin 10.11: plugin settings never reaching the web client, and a blank web UI over plain HTTP.
+>
+> **Install from this repository**
+> 1. Dashboard → Plugins → Repositories → **+** → add `https://raw.githubusercontent.com/Atvriders/jellyfin-projectionist/master/manifest.json`
+> 2. **Remove ZL154's Projectionist repository** if you have it. While both are listed, a future upstream release would auto-update over this build.
+> 3. Catalog → Projectionist → install **1.1.2.0** (or let *Scheduled Tasks → Update Plugins* do it), then restart Jellyfin. Your existing Projectionist settings are kept.
+> 4. Plugin settings → **Feature preload**: **Hot** (starts the movie's transcode during the preroll) or **Warm** (lighter: wakes storage, pre-buffers direct-play in browsers).
+
 A Jellyfin plugin that plays preroll videos before movies **and** TV episodes. Folder-based source — no Jellyfin library required. Custom-designed dark admin UI. Schedules, per-library rules, per-user rules, maturity gating, cooldowns, skippable prerolls, stats dashboard, and a lot more.
 
 > Built because every other Jellyfin preroll plugin either (a) requires you to create a Jellyfin library full of preroll files that then clutters your homepage, or (b) only works for movies. Projectionist solves both.
@@ -91,7 +99,7 @@ A Jellyfin plugin that plays preroll videos before movies **and** TV episodes. F
 - **Series-specific prerolls** — drop a `theme-preroll.mp4` (configurable name) in any series folder. Overrides global selection for that show
 - **Trailer mode** — chain N local trailers from the feature's own metadata before it plays. Cinema-style "and now our feature presentation"
 - **Skippable prerolls** — skip-button overlay during preroll playback with a configurable min-seconds delay
-- **Feature preload** — best-effort web-client warmup that prepares Jellyfin playback info for the movie or episode while prerolls are running
+- **Feature preload** — the movie gets ready *while* the prerolls play, so there is no stop-and-load at the switch. **Warm** wakes the movie's storage (sleeping HDDs, NAS shares, rclone mounts) for every client that plays prerolls, and lets browsers pre-buffer a direct-play movie. **Hot** also starts the movie's transcode during the preroll and hands that exact session to the player (browsers pre-download its first segments). Hot costs one extra transcode per playing device during the preroll.
 
 ### 📊 Stats
 
@@ -266,7 +274,7 @@ For movies that's the whole story. The provider:
 7. Picks N according to the selection mode
 8. (Optional) prepends N local trailers
 9. Resolves each pick via the hidden library to get a real `BaseItem.Id` (required for `MediaSourceInfo` lookup)
-10. Optionally warms the feature's Jellyfin playback info in the web client while prerolls are running
+10. With Feature preload on (Warm/Hot): pre-reads the feature file in the background, prepares the feature's playback decision server-side, and in Hot pre-starts its transcode and hands that session to the player when it asks for the feature
 11. Records cooldown, stats, session bookkeeping
 
 For **episodes**, the bundled JavaScript hook calls the same endpoint client-side because Jellyfin's web/desktop/TV clients won't.
@@ -333,3 +341,5 @@ Not expected, just appreciated. Issue reports and clear bug reports are equally 
 ## 📜 License
 
 MIT — see [LICENSE](LICENSE).
+
+The test suite vendors one third-party file under its own licence: url-toolkit (Apache-2.0), used only by the JavaScript tests and not part of the plugin. See [tests/js/vendor/THIRD-PARTY-NOTICES.md](tests/js/vendor/THIRD-PARTY-NOTICES.md).

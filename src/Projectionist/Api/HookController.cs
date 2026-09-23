@@ -1,6 +1,7 @@
 using System.IO;
 using System.Reflection;
 using Jellyfin.Plugin.Projectionist.Configuration;
+using Jellyfin.Plugin.Projectionist.Services.Handoff;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,12 +40,10 @@ public sealed class HookController : ControllerBase
     public ActionResult<HookSettingsResponse> GetHookSettings()
     {
         var cfg = Plugin.Instance?.Configuration;
-        var preloadMode = cfg?.FeaturePreloadMode ?? FeaturePreloadMode.Off;
-        if (cfg?.EnableFeaturePreload == true && preloadMode == FeaturePreloadMode.Off)
-        {
-            preloadMode = FeaturePreloadMode.Warm;
-        }
+        var preloadMode = PreloadModes.Effective(cfg);
 
+        // The hook re-reads this periodically; never let a cache answer for the server.
+        Response.Headers["Cache-Control"] = "no-store";
         return Ok(new HookSettingsResponse
         {
             EnableSkippablePrerolls = cfg?.EnableSkippablePrerolls ?? true,

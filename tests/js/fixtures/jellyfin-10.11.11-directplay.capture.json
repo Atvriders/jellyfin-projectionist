@@ -1,0 +1,15 @@
+{
+  "about": "player.streamInfo.url read from a real jellyfin-web 10.11.11 player (stock web client served by a portable Jellyfin 10.11.11 on loopback, Google Chrome 150 headless) after it direct-played a movie. The player built the URL itself; the capture replaced the ApiKey value with <tok>. The run did not keep the PlaybackInfo response, so mediaSource below lists the fields the URL is built from as they appear in it: this capture pins the URL's shape (path, casing, parameter names and their order, with a real device id), not the lower-casing of Container.",
+  "serverAddress": "http://127.0.0.1:18471",
+  "deviceId": "TW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBIZWFkbGVzc0Nocm9tZS8xNTAuMC4wLjAgU2FmYXJpLzUzNy4zNnwxNzkwMTIxMTc3ODI2",
+  "item": { "Id": "a9e1d99df22aee602be916311cddf8bf" },
+  "mediaSource": {
+    "Id": "a9e1d99df22aee602be916311cddf8bf",
+    "Container": "mp4",
+    "ETag": "d3100dd9035afff7c9dc0cffd4f298f3",
+    "SupportsDirectPlay": true,
+    "SupportsDirectStream": true,
+    "SupportsTranscoding": true
+  },
+  "playerUrl": "http://127.0.0.1:18471/Videos/a9e1d99df22aee602be916311cddf8bf/stream.mp4?Static=true&mediaSourceId=a9e1d99df22aee602be916311cddf8bf&deviceId=TW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBIZWFkbGVzc0Nocm9tZS8xNTAuMC4wLjAgU2FmYXJpLzUzNy4zNnwxNzkwMTIxMTc3ODI2&ApiKey=<tok>&Tag=d3100dd9035afff7c9dc0cffd4f298f3"
+}

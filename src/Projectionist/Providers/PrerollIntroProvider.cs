@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Jellyfin.Database.Implementations.Entities;
 using Jellyfin.Plugin.Projectionist.Configuration;
 using Jellyfin.Plugin.Projectionist.Services;
+using Jellyfin.Plugin.Projectionist.Services.Handoff;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.Projectionist.Providers;
@@ -25,6 +27,9 @@ public sealed class PrerollIntroProvider : IIntroProvider
     private readonly SeriesPrerollFinder _seriesFinder;
     private readonly TrailerFetcher _trailerFetcher;
     private readonly StatsStore _stats;
+    private readonly IHttpContextAccessor _http;
+    private readonly IFeatureWarmer _warmer;
+    private readonly IFeatureHandoffRegistry _handoff;
 
     public PrerollIntroProvider(
         ILogger<PrerollIntroProvider> logger,
@@ -36,7 +41,10 @@ public sealed class PrerollIntroProvider : IIntroProvider
         HiddenLibraryManager hiddenLibrary,
         SeriesPrerollFinder seriesFinder,
         TrailerFetcher trailerFetcher,
-        StatsStore stats)
+        StatsStore stats,
+        IHttpContextAccessor http,
+        IFeatureWarmer warmer,
+        IFeatureHandoffRegistry handoff)
     {
         _logger = logger;
         _discovery = discovery;
@@ -48,6 +56,9 @@ public sealed class PrerollIntroProvider : IIntroProvider
         _seriesFinder = seriesFinder;
         _trailerFetcher = trailerFetcher;
         _stats = stats;
+        _http = http;
+        _warmer = warmer;
+        _handoff = handoff;
     }
 
     public string Name => "Projectionist";
@@ -176,9 +187,46 @@ public sealed class PrerollIntroProvider : IIntroProvider
             _sessions.RecordSeriesPrerollPlayed(user.Id, seriesId);
         }
 
+        // ---- Feature handoff: get the feature ready while the prerolls play ----
+        StartFeatureHandoff(item, user, intros, config);
+
         _logger.LogInformation("[Projectionist] returning {Count} preroll(s) before {ItemName}",
             intros.Count, item.Name);
         return Task.FromResult<IEnumerable<IntroInfo>>(intros);
+    }
+
+    /// <summary>
+    /// Called only when prerolls are being returned. Both calls are fire-and-forget and
+    /// guarded, so /Intros can never fail or slow down because of them.
+    /// </summary>
+    private void StartFeatureHandoff(BaseItem item, User user, List<IntroInfo> intros, PluginConfiguration config)
+        => StartFeatureHandoff(item, user, intros, config, _warmer, _handoff, _http, _logger);
+
+    /// <summary>
+    /// The handoff wiring of <see cref="GetIntros"/>: nothing in Off mode or without prerolls;
+    /// otherwise the storage warm and the handoff registration, each guarded on its own.
+    /// </summary>
+    internal static void StartFeatureHandoff(
+        BaseItem item,
+        User user,
+        IReadOnlyList<IntroInfo> intros,
+        PluginConfiguration config,
+        IFeatureWarmer warmer,
+        IFeatureHandoffRegistry handoff,
+        IHttpContextAccessor http,
+        ILogger logger)
+    {
+        if (intros.Count == 0 || PreloadModes.Effective(config) == FeaturePreloadMode.Off) return;
+
+        try { warmer.WarmInBackground(item); }
+        catch (Exception ex) { logger.LogWarning(ex, "[Projectionist] storage warm failed to start for {Item}", item.Name); }
+
+        try
+        {
+            var introIds = intros.Where(i => i.ItemId.HasValue).Select(i => i.ItemId!.Value).ToList();
+            handoff.OnIntrosResolved(http.HttpContext, item, user, introIds);
+        }
+        catch (Exception ex) { logger.LogWarning(ex, "[Projectionist] feature handoff failed for {Item}", item.Name); }
     }
 
     private static bool IsContentTypeEnabled(BaseItem item, PluginConfiguration config) => item switch
