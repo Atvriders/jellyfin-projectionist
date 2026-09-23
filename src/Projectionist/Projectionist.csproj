@@ -12,6 +12,8 @@
     <Version>1.1.2</Version>
     <!-- Keep the DLL independent of the git commit, so a release zip's checksum does not depend on which commit it was built from. -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <!-- Keep the build machine's paths out of the published DLL (its PDB path). -->
+    <PathMap>$(MSBuildProjectDirectory)=/_/src/Projectionist</PathMap>
     <Authors>AhmedMedia</Authors>
     <Description>Plays preroll videos before movies and episodes in Jellyfin. Folder-based, episode-aware, with a properly designed admin UI.</Description>
   </PropertyGroup>

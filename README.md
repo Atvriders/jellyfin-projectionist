@@ -28,6 +28,8 @@
 > 2. **Remove ZL154's Projectionist repository** if you have it. While both are listed, a future upstream release would auto-update over this build.
 > 3. Catalog → Projectionist → install **1.1.2.0** (or let *Scheduled Tasks → Update Plugins* do it), then restart Jellyfin. Your existing Projectionist settings are kept.
 > 4. Plugin settings → **Feature preload**: **Hot** (starts the movie's transcode during the preroll) or **Warm** (lighter: wakes storage, pre-buffers direct-play in browsers).
+>
+> Catalog installs auto-update from this repository. To stay on an older version, set `"autoUpdate": false` in that version's `plugins/Projectionist_*/meta.json` (with Jellyfin stopped).
 
 A Jellyfin plugin that plays preroll videos before movies **and** TV episodes. Folder-based source — no Jellyfin library required. Custom-designed dark admin UI. Schedules, per-library rules, per-user rules, maturity gating, cooldowns, skippable prerolls, stats dashboard, and a lot more.
 
@@ -145,8 +147,10 @@ Projectionist works around this with a small JavaScript hook that monkey-patches
 One-click install + auto-updates. Add this URL to **Dashboard → Plugins → Repositories**:
 
 ```
-https://raw.githubusercontent.com/ZL154/jellyfin-projectionist/main/manifest.json
+https://raw.githubusercontent.com/Atvriders/jellyfin-projectionist/master/manifest.json
 ```
+
+If you already have ZL154's Projectionist repository listed, **remove it**: while both are listed, a future upstream release would auto-update over this fork.
 
 Then:
 
@@ -154,16 +158,17 @@ Then:
 2. **Repository Name:** anything (e.g. `Projectionist`)
 3. **Repository URL:** paste the URL above
 4. **Save**
-5. Switch to the **Catalog** tab → find **Projectionist** under General → Install
+5. Switch to the **Catalog** tab → find **Projectionist** under General → Install **1.1.2.0**
 6. Restart Jellyfin when prompted
 7. Dashboard → Plugins → Projectionist → configure
 
 ### Manual install
 
-1. Download `projectionist_1.1.0.0.zip` from the [latest release](https://github.com/ZL154/jellyfin-projectionist/releases/latest).
+1. Download `projectionist_1.1.2.0.zip` from the [latest release](https://github.com/Atvriders/jellyfin-projectionist/releases/latest).
 2. Extract it into your Jellyfin plugins directory so the path looks like:
-   - **Docker:** `<config-volume>/plugins/Projectionist_1.1.0.0/`
-   - **Bare metal:** `<jellyfin-data>/plugins/Projectionist_1.1.0.0/`
+   - **Docker:** `<config-volume>/plugins/Projectionist_1.1.2.0/`
+   - **Bare metal:** `<jellyfin-data>/plugins/Projectionist_1.1.2.0/`
+   (the zip already contains the `Projectionist_1.1.2.0` folder; remove any older `Projectionist_*` folder first)
 3. Restart Jellyfin.
 4. Dashboard → Plugins → Projectionist → configure.
 
@@ -288,7 +293,7 @@ The hidden internal library exists because Jellyfin's player resolves `MediaSour
 Requires .NET SDK 9.0.
 
 ```bash
-git clone https://github.com/ZL154/jellyfin-projectionist
+git clone https://github.com/Atvriders/jellyfin-projectionist
 cd jellyfin-projectionist
 dotnet build src/Projectionist/Projectionist.csproj -c Release
 # DLL output: src/Projectionist/bin/Release/net9.0/Jellyfin.Plugin.Projectionist.dll
